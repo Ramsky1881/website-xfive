@@ -7,6 +7,9 @@ import MemberGrid from '../components/MemberGrid';
 import SponsorSection from '../components/SponsorSection';
 import Livestream from '../components/Livestream';
 import Footer from '../components/Footer';
+import About from '../components/About';
+import ContactUs from '../components/ContactUs';
+import FAQ from '../components/FAQ';
 
 const Home = () => {
     return (
@@ -24,6 +27,10 @@ const Home = () => {
                 <div id="profil"><MemberGrid /></div>
                 <div id="gallery"><SponsorSection /></div>
                 <div id="info"><Livestream /></div>
+
+                <div id="about"><About /></div>
+                <div id="contact"><ContactUs /></div>
+                <div id="faq"><FAQ /></div>
             </div>
 
             <Footer />
