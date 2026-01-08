@@ -2,6 +2,7 @@ import { z } from 'zod'
 import prisma from '../../utils/prisma'
 import { logAdminAction } from '../../utils/audit'
 import { rateLimit } from '../../utils/rateLimit'
+import { handlePrismaError } from '../../utils/error'
 
 const createSchema = z.object({
   title: z.string().optional(),
@@ -30,14 +31,18 @@ export default defineEventHandler(async (event) => {
     const result = createSchema.safeParse(body)
     if (!result.success) throw createError({ statusCode: 400, data: result.error.errors })
 
-    const item = await prisma.galleryItem.create({ data: result.data })
+    try {
+      const item = await prisma.galleryItem.create({ data: result.data })
 
-    const user = event.context.user
-    const ip = getRequestIP(event, { xForwardedFor: true }) || 'unknown'
-    const ua = getHeader(event, 'user-agent') || 'unknown'
-    await logAdminAction(user.id, 'CREATE', 'GalleryItem', item.id, body, ip, ua)
+      const user = event.context.user
+      const ip = getRequestIP(event, { xForwardedFor: true }) || 'unknown'
+      const ua = getHeader(event, 'user-agent') || 'unknown'
+      await logAdminAction(user.id, 'CREATE', 'GalleryItem', item.id, body, ip, ua)
 
-    return item
+      return item
+    } catch (e) {
+      handlePrismaError(e)
+    }
   }
 
   if (method === 'PUT') {
@@ -49,17 +54,21 @@ export default defineEventHandler(async (event) => {
     const result = updateSchema.safeParse(body)
     if (!result.success) throw createError({ statusCode: 400, data: result.error.errors })
 
-    const item = await prisma.galleryItem.update({
-      where: { id },
-      data: result.data
-    })
+    try {
+      const item = await prisma.galleryItem.update({
+        where: { id },
+        data: result.data
+      })
 
-    const user = event.context.user
-    const ip = getRequestIP(event, { xForwardedFor: true }) || 'unknown'
-    const ua = getHeader(event, 'user-agent') || 'unknown'
-    await logAdminAction(user.id, 'UPDATE', 'GalleryItem', item.id, body, ip, ua)
+      const user = event.context.user
+      const ip = getRequestIP(event, { xForwardedFor: true }) || 'unknown'
+      const ua = getHeader(event, 'user-agent') || 'unknown'
+      await logAdminAction(user.id, 'UPDATE', 'GalleryItem', item.id, body, ip, ua)
 
-    return item
+      return item
+    } catch (e) {
+      handlePrismaError(e)
+    }
   }
 
   if (method === 'DELETE') {

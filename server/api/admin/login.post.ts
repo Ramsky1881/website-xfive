@@ -26,9 +26,19 @@ export default defineEventHandler(async (event) => {
 
   const { email, password } = result.data
 
-  const admin = await prisma.adminUser.findUnique({
-    where: { email },
-  })
+  let admin
+  try {
+    admin = await prisma.adminUser.findUnique({
+      where: { email },
+    })
+  } catch (e) {
+    console.error('Login DB Error:', e)
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Database Error',
+      message: 'Could not connect to database.'
+    })
+  }
 
   if (!admin) {
     // Fake verify to prevent timing attacks
