@@ -1,6 +1,6 @@
 [build]
   command = "npm run db:setup:prod && npx prisma generate && npm run build"
-  publish = ".output/public"
+  publish = "dist"
 
 [dev]
   command = "npm run dev"
