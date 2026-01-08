@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model AdminAuditLog {
+  id         String   @id @default(uuid())
+  adminId    String
+  action     String
+  entity     String
+  entityId   String?
+  details    String?  // JSON string
+  ip         String
+  userAgent  String
+  createdAt  DateTime @default(now())
+}
+
+model Feature {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  imageUrl    String
+  link        String?
+  position    Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  slug        String   @unique
+}
+
+model Game {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  imageUrl    String
+  link        String?
+  position    Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  slug        String   @unique
+}
+
+model Tournament {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  imageUrl    String
+  startDate   DateTime
+  endDate     DateTime
+  location    String?
+  prizePool   String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  slug        String   @unique
+}
+
+model GalleryItem {
+  id          String   @id @default(uuid())
+  title       String?
+  imageUrl    String
+  category    String   @default("general")
+  position    Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
